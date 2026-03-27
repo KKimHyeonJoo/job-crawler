@@ -1,0 +1,27 @@
+name: Recruit Crawler
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 매일 0시(UTC) 실행 → 한국 시간은 오전 9시
+  workflow_dispatch: # 수동으로 실행해볼 수 있는 버튼 생성
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run crawler
+        env:
+          N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }} # 비밀번호 금고에서 n8n 주소를 꺼내옴
+        run: python saramin_crawler.py
